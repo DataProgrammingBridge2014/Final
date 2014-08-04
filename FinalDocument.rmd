@@ -1,11 +1,8 @@
 Week 9 - Group Submission - R
 ==================================================================================
 
-## Conclusions
+## Summary
 These four data sets are together known as Anscombe's Quartet, developed in 1973 by professor Francis Anscombe. With nearly identical means, sample variances, correlation coefficients and linear regression lines, these data sets demonstrate the  significance of graphically visualizing data, as well as the potentially large influence on the data of one or two significant outliers. Using R and Python code, our team was able to analyze both the similarities and differences of the data sets in this quartet. The primary takeaway of this exercise is the idea that representing data graphically is at least as significant as running layers of strictly quantitative analysis.
-
-## Section Categories
-Here we should break up our documentation into sections with our code and supporting visualizations.
 
 ## Workspace
 Below is consolidated code from the team
@@ -45,7 +42,7 @@ abline(lm(IVdf$y ~ IVdf$x))
 We can see that all four have a very similar regression line, but obviously those regression lines don't tell us very much about II, III, or IV.
 
 
-**Summaries:**
+**Summaries of Data Sets**
 
 ``` {r echo=TRUE}
 summary(Idf)
@@ -104,7 +101,7 @@ summary(fit4)
 
 ```
 
-**Coefficient Plots and Residuals
+**Coefficient Plots and Residuals**
 ```{r}
 library(coefplot)
 
@@ -179,7 +176,7 @@ cunyxy <- data.frame(cunyx, cunyy, dataset)
 plot all 4 sets together
 ```{r fig.width=7, fig.height=6}
 e <- ggplot(data = cunyxy, aes(x=cunyx, y= cunyy))
-e + geom_point(aes(color = dataset), size = 5)+geom_smooth(method = lm)+ labs(x="X values", y = "Y values")
+e + geom_point(aes(color = dataset), size = 4)+geom_smooth(method = lm)+ labs(x="X values", y = "Y values")
 ```
 
 #model summary
@@ -194,17 +191,34 @@ summary(lm4)
 # combine data sets, sum of y as predictors of x value
 cunyy <- as.vector(cuny9$y1 + cuny9$y2 + cuny9$y3) #adding y's for I, II, and III
 cunyx <- as.vector(cuny9$x1)  #x1 = x2 = x3 = x
-cunyxy <- data.frame(cunyx, cunyy)
+cunyxy <- data.frame(cunyx,cunyy)
 
 ```
 
 #graph model
 ```{r fig.width=7, fig.height=6}
-e <- ggplot(data = cunyxy, aes(y=cunyx, x= cunyy))
-e + geom_point(size = 4, color ="green3")+geom_smooth(method = lm)+labs(x="X values", y = "Y values")
+e <- ggplot(data = cunyxy, aes(y =cunyx, x=cunyy))
+e + geom_point(size = 4, color ="green3")+stat_smooth(method = lm)+labs(x="X values", y = "Y values")
 ```
 
-#model summary
+#model summary on graphic model
 ```{r}
+#fit on graph, indicates the sum or model of x = b1y1+b2y2+b3y3 where b1=b2=b3=1 is signficant
+
 lm3 <- lm(cunyx ~ cunyy, data = cunyxy)
 summary(lm3)
+```
+
+Exploring fits for each predictor
+```{r}
+#P value on y4 and y2 indicate they may not be signficant predictors of x in a linear model
+fit4 <- lm(cunyx ~ cuny9$y1 + cuny9$y2 +cuny9$y3+cuny9$y4)
+summary(fit4)
+
+# P value on y2 indicates it may not be a signficant predictor of x in a linear model
+fit3 <- lm(cunyx ~ cuny9$y1 + cuny9$y2 +cuny9$y3)
+summary(fit3)
+
+#fit model excluding y2 and y4
+fit2 <- lm(cunyx ~ cuny9$y1 +cuny9$y3)
+summary(fit2)
